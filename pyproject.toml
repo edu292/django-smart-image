@@ -4,7 +4,7 @@ build-backend = "hatchling.build"
 
 [project]
 name = "django-smart-image"
-version = "0.1.0"
+version = "0.1.1"
 authors = [
     { name = "Eduardo Skoroboatei Gomes", email = "eduskoroboatei@gmail.com" }
 ]
@@ -25,7 +25,7 @@ license = "MIT"
 license-files = ["LICEN[CS]E*"]
 
 [tool.hatch.build.targets.wheel]
-packages = ["src/smart_media"]
+packages = ["src/smart_image"]
 
 [project.urls]
 Homepage = "https://github.com/edu292/django-smart-image"
