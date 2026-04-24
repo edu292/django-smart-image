@@ -1,0 +1,66 @@
+<label class="preview-image-input {% if widget.attrs.class %}{{ widget.attrs.class }}{% endif %}"
+        id="{{ widget.attrs.id }}"
+        hx-preserve="true">
+    {% block preview_wrapper %}
+    <div class="preview-image-input__preview-wrapper">
+        {% block image %}
+        <img class="preview-image-input__image"
+            src="{% if widget.value %}{{ widget.value.url }}{% elif widget.placeholder %}{{ widget.placeholder }}{% else %}data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='gray'><path d='M12 12c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm0 2c-2.67 0-8 1.34-8 4v2h16v-2c0-2.66-5.33-4-8-4z'/></svg>{% endif %}"
+            alt="Preview" />
+        {% endblock %}
+		{% block icon_wrapper %}
+        <div class="preview-image-input__icon-wrapper">
+        {% block icon %}
+            <svg xmlns="http://www.w3.org/2000/svg"
+                 viewBox="0 0 24 24"
+                 fill="none"
+                 stroke="currentColor"
+                 stroke-width="2"
+                 stroke-linecap="round"
+                 stroke-linejoin="round"
+                 class="preview-image-input__icon">
+                <path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z"></path>
+                <circle cx="12" cy="13" r="4"></circle>
+            </svg>
+        {% endblock%}
+        </div>
+		{% endblock %}
+    </div>
+	{% endblock %}
+	{% block input %}
+    <input type="file"
+           name="{{ widget.name }}"
+           accept="image/*,android/allowCamera"
+           class="preview-image-input__field"
+    />
+	{% endblock %}
+	{% block label%}
+	{% if widget.attrs.label %}
+	    <span class="preview-image-input__text">{{ widget.attrs.label }}</span>
+	{% endif %}
+	{% endblock %}
+</label>
+{% block script %}
+<script>
+  {
+    const widget = document.getElementById("{{ widget.attrs.id }}");
+    if (!widget) return;
+
+    const input = widget.querySelector("input[type=file]");
+    const previewImage = widget.querySelector("img");
+    if (!input || !previewImage) return;
+
+    input.addEventListener("change", (event) => {
+      const file = event.target.files[0];
+      if (!file) return;
+
+      const objectUrl = URL.createObjectURL(file);
+      previewImage.src = objectUrl;
+
+      previewImage.onload = () => {
+        URL.revokeObjectURL(objectUrl);
+      };
+    });
+  }
+</script>
+{% endblock %}
