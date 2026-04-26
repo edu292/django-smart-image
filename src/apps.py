@@ -2,7 +2,7 @@ from django.apps import AppConfig
 from django.db.models import FileField
 
 
-class SmartdImageConfig(AppConfig):
+class SmartImageConfig(AppConfig):
     name = 'smart_image'
 
     def ready(self) -> None:
