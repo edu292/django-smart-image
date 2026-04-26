@@ -17,8 +17,7 @@
       {% endblock %}
     </button>
   </div>
-  <dialog class="cam-input__overlay" hidden>
-    <div class="cam-input__modal">
+  <dialog class="cam-input__modal">
       <button type="button" class="cam-input__btn-close">
         {% block close_icon %}
         &times;
@@ -53,7 +52,6 @@
           {% endblock %}
         </button>
       </div>
-    </div>
   </dialog>
 </div>
 
@@ -61,91 +59,91 @@
 <script>
   {
     const root = document.getElementById("{{ widget.attrs.id }}");
-      const trigger = root.querySelector(".cam-input__trigger");
-      const previewImg = root.querySelector(".cam-input__preview-img");
-      const fileInput = root.querySelector("input[type=file]");
+    const trigger = root.querySelector(".cam-input__trigger");
+    const previewImg = root.querySelector(".cam-input__preview-img");
+    const fileInput = root.querySelector("input[type=file]");
 
-      const overlay = root.querySelector(".cam-input__overlay");
-      const video = root.querySelector(".cam-input__video");
-      const canvas = root.querySelector(".cam-input__canvas");
+    const modal = root.querySelector(".cam-input__modal");
+    const video = root.querySelector(".cam-input__video");
+    const canvas = root.querySelector(".cam-input__canvas");
 
-      const btnCapture = root.querySelector(".cam-input__btn-capture");
-      const btnRetry = root.querySelector(".cam-input__btn-retry");
-      const btnConfirm = root.querySelector(".cam-input__btn-confirm");
-      const btnClose = root.querySelector(".cam-input__btn-close");
+    const btnCapture = root.querySelector(".cam-input__btn-capture");
+    const btnRetry = root.querySelector(".cam-input__btn-retry");
+    const btnConfirm = root.querySelector(".cam-input__btn-confirm");
+    const btnClose = root.querySelector(".cam-input__btn-close");
 
-      let stream = null;
+    let stream = null;
 
-      async function startCamera() {
-        try {
-          stream = await navigator.mediaDevices.getUserMedia({
-            video: { facingMode: "environment" },
-          });
-          video.srcObject = stream;
-          overlay.hidden = false;
-          setUIState("camera");
-        } catch (err) {
-          console.error("Camera fail:", err);
-          alert("Camera access denied.");
-        }
-      }
-
-      function stopCamera() {
-        if (stream) stream.getTracks().forEach((t) => t.stop());
-        video.srcObject = null;
-        overlay.hidden = true;
-      }
-
-      function setUIState(state) {
-        const isCam = state === "camera";
-        video.hidden = !isCam;
-        canvas.hidden = isCam;
-        btnCapture.hidden = !isCam;
-        btnRetry.hidden = isCam;
-        btnConfirm.hidden = isCam;
-      }
-
-      trigger.addEventListener("click", startCamera);
-
-      btnClose.addEventListener("click", stopCamera);
-
-      overlay.addEventListener("click", (event) => {
-        if (event.target === overlay) stopCamera();
-      });
-
-      btnCapture.addEventListener("click", () => {
-        canvas.width = video.videoWidth;
-        canvas.height = video.videoHeight;
-        canvas.getContext("2d").drawImage(video, 0, 0);
-        setUIState("review");
-      });
-
-      btnRetry.addEventListener("click", () => {
+    async function startCamera() {
+      try {
+        stream = await navigator.mediaDevices.getUserMedia({
+          video: { facingMode: "environment" },
+        });
+        video.srcObject = stream;
+        modal.showModal();
         setUIState("camera");
-      });
+      } catch (err) {
+        console.error("Camera fail:", err);
+        alert("Camera access denied.");
+      }
+    }
 
-      btnConfirm.addEventListener("click", () => {
-        canvas.toBlob(
-          (blob) => {
-            const file = new File([blob], "capture.webp", {
-              type: "image/webp",
-            });
+    function stopCamera() {
+      if (stream) stream.getTracks().forEach((t) => t.stop());
+      video.srcObject = null;
+      modal.close();
+    }
 
-            const dt = new DataTransfer();
-            dt.items.add(file);
-            fileInput.files = dt.files;
+    function setUIState(state) {
+      const isCam = state === "camera";
+      video.hidden = !isCam;
+      canvas.hidden = isCam;
+      btnCapture.hidden = !isCam;
+      btnRetry.hidden = isCam;
+      btnConfirm.hidden = isCam;
+    }
 
-            const url = URL.createObjectURL(file);
-            previewImg.src = url;
-            previewImg.hidden = false; 
-            previewImg.onload = () => URL.revokeObjectURL(url);
+    trigger.addEventListener("click", startCamera);
 
-            stopCamera();
-          },
-          "image/webp",
-          0.8
-        );
-      });
+    btnClose.addEventListener("click", stopCamera);
+
+    modal.addEventListener("cancel", () => {
+      stopCamera();
+    });
+
+    btnCapture.addEventListener("click", () => {
+      canvas.width = video.videoWidth;
+      canvas.height = video.videoHeight;
+      canvas.getContext("2d").drawImage(video, 0, 0);
+      setUIState("review");
+    });
+
+    btnRetry.addEventListener("click", () => {
+      setUIState("camera");
+    });
+
+    btnConfirm.addEventListener("click", () => {
+      canvas.toBlob(
+        (blob) => {
+          const file = new File([blob], "capture.webp", {
+            type: "image/webp",
+          });
+
+          const dt = new DataTransfer();
+          dt.items.add(file);
+          fileInput.files = dt.files;
+
+          const url = URL.createObjectURL(file);
+          previewImg.src = url;
+          previewImg.hidden = false; 
+          previewImg.onload = () => URL.revokeObjectURL(url);
+
+          stopCamera();
+        },
+        "image/webp",
+        0.8
+      );
+    });
   }
 </script>
 {% endblock %}

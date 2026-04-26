@@ -4,7 +4,7 @@ build-backend = "hatchling.build"
 
 [project]
 name = "django-smart-image"
-version = "0.1.2"
+version = "0.1.3"
 authors = [
     { name = "Eduardo Skoroboatei Gomes", email = "eduskoroboatei@gmail.com" }
 ]
