@@ -17,3 +17,10 @@ class PreviewImageInput(FileInput):
 
     def format_value(self, value: Any) -> str | None:
         return value
+
+
+class CamImageInput(FileInput):
+    template_name = 'smart_image/cam_image_input.html'
+
+    def format_value(self, value):
+        return value
