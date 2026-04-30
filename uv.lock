@@ -134,7 +134,7 @@ wheels = [
 
 [[package]]
 name = "django-smart-image"
-version = "0.1.8"
+version = "0.1.9"
 source = { editable = "." }
 dependencies = [
     { name = "django" },

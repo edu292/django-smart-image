@@ -31,6 +31,11 @@ class CamImageInput(FileInput):
         context = super().get_context(name, value, attrs)
         context['widget']['capture_width'] = self.capture_width
         context['widget']['capture_height'] = self.capture_height
+        exclude = {'name', 'class', 'id'}
+
+        extra_attrs = {k: v for k, v in context['widget']['attrs'].items() if k not in exclude}
+
+        context['widget']['extra_attrs'] = extra_attrs
 
         return context
 
